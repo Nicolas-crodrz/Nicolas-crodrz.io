@@ -44,8 +44,9 @@ js/data.js          Datos de los proyectos (nombre, categoría, tecnologías, en
 js/windows.js       Gestor de ventanas flotantes (arrastrar, minimizar, maximizar…)
 js/hero3d.js        Escena 3D del hero (módulo ES con Three.js)
 img/                Favicon, avatar e imagen de previsualización (Open Graph)
-CNAME               Dominio personalizado de GitHub Pages (pendiente de reactivar)
 ```
+
+> No hay archivo `CNAME`: el sitio se sirve en la URL de GitHub Pages.
 
 ## 🌐 Dominio y publicación
 
@@ -58,16 +59,23 @@ El sitio está publicado con GitHub Pages en:
 > `/Nicolas-crodrz.io/` funciona y `/nicolas-crodrz.io/` devuelve 404. Si algún día se renombra el
 > repositorio, hay que actualizar `canonical`, `og:url`, `og:image` y `twitter:image` en `index.html`.
 
-### Estado del dominio `nicolas-crodrz.io`
+### Dominio propio (no configurado)
 
-⚠️ **El dominio `nicolas-crodrz.io` todavía no existe en DNS** (el registro `.io` devuelve
-NXDOMAIN y su RDAP responde 404), así que hoy **no está registrado o no tiene nameservers**.
-Mientras eso no se resuelva, el sitio se sirve en la URL de GitHub indicada arriba.
+**Decisión actual: el sitio se queda en la URL de GitHub**, que es gratuita y no requiere nada más.
+No hay dominio personalizado ni archivo `CNAME` en el repositorio.
 
-Para pasar al dominio propio hay que hacer, en este orden:
+Si en el futuro se quiere un dominio propio, hay dos caminos:
 
-1. **Registrar `nicolas-crodrz.io`** en un registrador de dominios `.io`.
-2. **Crear el DNS**:
+- **Gratis 1 año** con el [GitHub Student Developer Pack](https://education.github.com/pack)
+  (apartado *Domains*): Namecheap regala un `.me`, Name.com un dominio entre +25 extensiones
+  (`.dev`, `.app`, `.live`, `.studio`, `.software`…) y .TECH un `.tech`. **El `.io` no entra en los
+  gratis**: en Namecheap aparece con descuento de estudiante (~24,88 $/año) pero se paga.
+- **De pago**: registrar `nicolas-crodrz.io` en cualquier registrador `.io`.
+
+En cualquiera de los dos casos los pasos son:
+
+1. Registrar el dominio en el registrador.
+2. Crear el DNS:
 
 | Tipo | Nombre | Valor |
 | --- | --- | --- |
@@ -77,14 +85,16 @@ Para pasar al dominio propio hay que hacer, en este orden:
 | `A` | `@` | `185.199.111.153` |
 | `CNAME` | `www` | `nicolas-crodrz.github.io` |
 
-3. **Volver a añadir el archivo `CNAME`** en la raíz con el contenido `nicolas-crodrz.io`
-   y hacer push. En *Settings → Pages* tiene que quedar *Source = Deploy from a branch*, rama
-   `main`, carpeta `/ (root)`, dominio `nicolas-crodrz.io` y **Enforce HTTPS** activado.
+3. Volver a **añadir el archivo `CNAME`** en la raíz con el dominio elegido (por ejemplo
+   `nicolas-crodrz.me`) y hacer push. En *Settings → Pages* tiene que quedar
+   *Source = Deploy from a branch*, rama `main`, carpeta `/ (root)`, ese dominio y
+   **Enforce HTTPS** activado.
 
-> ⚠️ En cuanto exista el `CNAME`, GitHub sirve el sitio **solo** en ese dominio: si el DNS aún no
-> resuelve, la URL `*.github.io` deja de funcionar (da 404). Por eso ahora mismo **no** está.
+> ⚠️ En cuanto exista el `CNAME`, GitHub sirve el sitio **solo** en ese dominio: si el DNS todavía no
+> resuelve, la URL `*.github.io` deja de funcionar (da 404). Por eso conviene añadirlo únicamente
+> cuando el dominio ya funcione.
 >
-> Al reactivar el dominio hay que actualizar también `canonical`, `og:url`, `og:image` y
+> Al configurar el dominio hay que actualizar también `canonical`, `og:url`, `og:image` y
 > `twitter:image` en `index.html`, que hoy apuntan a la URL de GitHub.
 
 ## ▶️ Ejecución local
