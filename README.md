@@ -44,21 +44,25 @@ js/data.js          Datos de los proyectos (nombre, categoría, tecnologías, en
 js/windows.js       Gestor de ventanas flotantes (arrastrar, minimizar, maximizar…)
 js/hero3d.js        Escena 3D del hero (módulo ES con Three.js)
 img/                Favicon, avatar e imagen de previsualización (Open Graph)
-CNAME               Dominio personalizado de GitHub Pages
+CNAME               Dominio personalizado de GitHub Pages (pendiente de reactivar)
 ```
 
 ## 🌐 Dominio y publicación
 
-El sitio se publica en **https://nicolas-crodrz.io** desde GitHub Pages.
+El sitio está publicado con GitHub Pages en:
 
-El archivo `CNAME` de la raíz contiene el dominio personalizado. En GitHub hay que tener, en
-**Settings → Pages**:
+**https://nicolas-crodrz.github.io/nicolas-crodrz.io/**
 
-- **Source**: *Deploy from a branch*, rama `main` (o `gh-pages`), carpeta `/ (root)`.
-- **Custom domain**: `nicolas-crodrz.io` (GitHub lo lee del `CNAME`).
-- **Enforce HTTPS**: activado (el certificado se emite solo, tarda unos minutos).
+### Estado del dominio `nicolas-crodrz.io`
 
-En el DNS del dominio (en el registrador) deben existir:
+⚠️ **El dominio `nicolas-crodrz.io` todavía no existe en DNS** (el registro `.io` devuelve
+NXDOMAIN y su RDAP responde 404), así que hoy **no está registrado o no tiene nameservers**.
+Mientras eso no se resuelva, el sitio se sirve en la URL de GitHub indicada arriba.
+
+Para pasar al dominio propio hay que hacer, en este orden:
+
+1. **Registrar `nicolas-crodrz.io`** en un registrador de dominios `.io`.
+2. **Crear el DNS**:
 
 | Tipo | Nombre | Valor |
 | --- | --- | --- |
@@ -68,7 +72,15 @@ En el DNS del dominio (en el registrador) deben existir:
 | `A` | `@` | `185.199.111.153` |
 | `CNAME` | `www` | `nicolas-crodrz.github.io` |
 
-> Los metadatos (`canonical`, `og:url`, `og:image`…) ya apuntan a `https://nicolas-crodrz.io/`.
+3. **Volver a añadir el archivo `CNAME`** en la raíz con el contenido `nicolas-crodrz.io`
+   y hacer push. En *Settings → Pages* tiene que quedar *Source = Deploy from a branch*, rama
+   `main`, carpeta `/ (root)`, dominio `nicolas-crodrz.io` y **Enforce HTTPS** activado.
+
+> ⚠️ En cuanto exista el `CNAME`, GitHub sirve el sitio **solo** en ese dominio: si el DNS aún no
+> resuelve, la URL `*.github.io` deja de funcionar (da 404). Por eso ahora mismo **no** está.
+>
+> Al reactivar el dominio hay que actualizar también `canonical`, `og:url`, `og:image` y
+> `twitter:image` en `index.html`, que hoy apuntan a la URL de GitHub.
 
 ## ▶️ Ejecución local
 
