@@ -51,7 +51,12 @@ CNAME               Dominio personalizado de GitHub Pages (pendiente de reactiva
 
 El sitio está publicado con GitHub Pages en:
 
-**https://nicolas-crodrz.github.io/nicolas-crodrz.io/**
+**https://nicolas-crodrz.github.io/Nicolas-crodrz.io/**
+
+> 📌 **La ruta de GitHub Pages distingue mayúsculas y minúsculas.** La URL depende del nombre exacto
+> del repositorio, que es **`Nicolas-crodrz.io`** (con `N` mayúscula). Por eso
+> `/Nicolas-crodrz.io/` funciona y `/nicolas-crodrz.io/` devuelve 404. Si algún día se renombra el
+> repositorio, hay que actualizar `canonical`, `og:url`, `og:image` y `twitter:image` en `index.html`.
 
 ### Estado del dominio `nicolas-crodrz.io`
 
