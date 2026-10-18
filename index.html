@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <title>Nicolás Cabrera Rodríguez · Desarrollador Web &amp; Formador</title>
+  <meta name="description"
+    content="Portafolio de Nicolás Cabrera Rodríguez: desarrollador web, administrador de sistemas, ciberseguridad y formador de formadores. Proyectos en ventanas flotantes y escena 3D interactiva." />
+  <meta name="author" content="Nicolás Cabrera Rodríguez" />
+  <meta name="theme-color" content="#05070d" />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="canonical" href="https://nicolas-crodrz.io/" />
+
+  <!-- Tema (se aplica antes del pintado para evitar parpadeos) -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("ncr-theme");
+        var theme = saved || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) { /* sin almacenamiento: tema oscuro por defecto */ }
+    })();
+  </script>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nicolas-crodrz.io/" />
+  <meta property="og:site_name" content="Nicolás Cabrera Rodríguez" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:title" content="Nicolás Cabrera Rodríguez · Desarrollador Web &amp; Formador" />
+  <meta property="og:description"
+    content="Portafolio interactivo con escena 3D, animaciones y proyectos en ventanas flotantes." />
+  <meta property="og:image" content="https://nicolas-crodrz.io/img/og-cover.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Portafolio de Nicolás Cabrera Rodríguez" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nicolás Cabrera Rodríguez · Desarrollador Web &amp; Formador" />
+  <meta name="twitter:description"
+    content="Portafolio interactivo con escena 3D, animaciones y proyectos en ventanas flotantes." />
+  <meta name="twitter:image" content="https://nicolas-crodrz.io/img/og-cover.jpg" />
+
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="img/favicon.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Three.js via importmap -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <!-- ============ PRELOADER ============ -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-inner">
+      <div class="preloader-logo">NC</div>
+      <div class="preloader-bar"><i id="preloaderBar"></i></div>
+      <p class="preloader-text">Cargando <span id="preloaderPct">0</span>%</p>
+    </div>
+  </div>
+
+  <!-- ============ CURSOR ============ -->
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+  <!-- ============ BACKGROUND ============ -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-noise"></div>
+  </div>
+
+  <!-- Scroll progress -->
+  <div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a href="#home" class="brand">
+      <span class="brand-mark">NC</span>
+      <span class="brand-text">Nicolás<em>Cabrera</em></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="Navegación principal">
+      <a href="#home" class="nav-link is-active">Inicio</a>
+      <a href="#about" class="nav-link">Sobre mí</a>
+      <a href="#resume" class="nav-link">Trayectoria</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#projects" class="nav-link">Proyectos</a>
+      <a href="#contact" class="nav-link">Contacto</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema" title="Cambiar tema">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+      <button class="nav-burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="home">
+      <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+      <div class="hero-fallback" aria-hidden="true"></div>
+
+      <div class="container hero-inner">
+        <p class="eyebrow"><span class="pulse-dot"></span> Disponible para nuevos retos</p>
+
+        <h1 class="hero-title">
+          <span class="line">Nicolás Cabrera</span>
+          <span class="line line-grad">Rodríguez</span>
+        </h1>
+
+        <p class="hero-role">
+          <span class="code-caret">&gt;</span>
+          <span id="typed"></span><span class="typed-caret">|</span>
+        </p>
+
+        <p class="hero-desc">
+          Desarrollador web, administrador de sistemas y <strong>formador de formadores</strong>.
+          Técnico Superior en Desarrollo de Aplicaciones Web, especializado en Ciberseguridad y
+          estudiante de Ingeniería Informática.
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#projects">
+            Ver proyectos <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a class="btn btn-outline" href="#contact">
+            <i class="fa-solid fa-paper-plane"></i> Hablemos
+          </a>
+        </div>
+
+        <ul class="socials">
+          <li><a href="https://github.com/Nicolas-crodrz" target="_blank" rel="noopener" data-tip="GitHub"
+              aria-label="GitHub"><i class="fa-brands fa-github"></i></a></li>
+          <li><a href="https://twitter.com/Nicolas06729512" target="_blank" rel="noopener" data-tip="X / Twitter"
+              aria-label="X Twitter"><i class="fa-brands fa-x-twitter"></i></a></li>
+          <li><a href="https://stackoverflow.com/users/19580095/nicolas" target="_blank" rel="noopener"
+              data-tip="Stack Overflow" aria-label="Stack Overflow"><i class="fa-brands fa-stack-overflow"></i></a>
+          </li>
+          <li><a href="https://www.instagram.com/nicolas06729512/" target="_blank" rel="noopener" data-tip="Instagram"
+              aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a></li>
+          <li><a href="https://www.facebook.com/Nicolas06729512/" target="_blank" rel="noopener" data-tip="Facebook"
+              aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a></li>
+          <li><a href="mailto:cabrerarodriguezftv@gmail.com" data-tip="Email" aria-label="Email"><i
+                class="fa-solid fa-envelope"></i></a></li>
+        </ul>
+      </div>
+
+      <div class="hero-stats container">
+        <div class="stat">
+          <span class="stat-num" data-count="32">0</span>
+          <span class="stat-label">Repositorios</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="4" data-suffix="+">0</span>
+          <span class="stat-label">Años de experiencia</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="4">0</span>
+          <span class="stat-label">Titulaciones</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-count="100" data-suffix="%">0</span>
+          <span class="stat-label">Motivación</span>
+        </div>
+      </div>
+
+      <a href="#about" class="scroll-cue" aria-label="Bajar · scroll">
+        <span class="mouse"><i></i></span> scroll
+      </a>
+      <p class="hero-hint"><i class="fa-solid fa-hand-pointer"></i> arrastra la figura 3D</p>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>HTML5</span><span>·</span><span>CSS3</span><span>·</span><span>SASS</span><span>·</span>
+        <span>JavaScript</span><span>·</span><span>Node.js</span><span>·</span><span>PHP</span><span>·</span>
+        <span>Laravel</span><span>·</span><span>React</span><span>·</span><span>C#</span><span>·</span>
+        <span>C++</span><span>·</span><span>SQL</span><span>·</span><span>MongoDB</span><span>·</span>
+        <span>Bootstrap</span><span>·</span><span>WordPress</span><span>·</span><span>Git</span><span>·</span>
+        <span>Ciberseguridad</span><span>·</span><span>Redes</span><span>·</span><span>Teleformación</span><span>·</span>
+        <!-- duplicate for seamless loop -->
+        <span>HTML5</span><span>·</span><span>CSS3</span><span>·</span><span>SASS</span><span>·</span>
+        <span>JavaScript</span><span>·</span><span>Node.js</span><span>·</span><span>PHP</span><span>·</span>
+        <span>Laravel</span><span>·</span><span>React</span><span>·</span><span>C#</span><span>·</span>
+        <span>C++</span><span>·</span><span>SQL</span><span>·</span><span>MongoDB</span><span>·</span>
+        <span>Bootstrap</span><span>·</span><span>WordPress</span><span>·</span><span>Git</span><span>·</span>
+        <span>Ciberseguridad</span><span>·</span><span>Redes</span><span>·</span><span>Teleformación</span><span>·</span>
+      </div>
+    </div>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="section" id="about">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <span class="section-tag"><i class="fa-solid fa-user-astronaut"></i> Sobre mí</span>
+          <h2 class="section-title">Tecnología, sistemas y <span class="grad">docencia</span></h2>
+        </header>
+
+        <div class="about-grid">
+          <div class="about-card glass" data-reveal data-tilt>
+            <div class="about-avatar">
+              <img src="img/avatar.png" alt="Avatar de Nicolás Cabrera" loading="lazy" width="220" height="220"
+                onerror="this.onerror=null;this.src='img/favicon.svg'" />
+              <span class="avatar-ring"></span>
+            </div>
+            <h3>Nicolás Cabrera Rodríguez</h3>
+            <p class="about-role">Desarrollador web · Admin. de sistemas · Formador</p>
+
+            <ul class="about-facts">
+              <li><i class="fa-solid fa-envelope"></i> <a
+                  href="mailto:cabrerarodriguezftv@gmail.com">cabrerarodriguezftv@gmail.com</a></li>
+              <li><i class="fa-solid fa-language"></i> Español · Inglés · Chino (A1)</li>
+              <li><i class="fa-solid fa-car"></i> Carnet de conducir B</li>
+              <li><i class="fa-solid fa-laptop-code"></i> Presencial, híbrido o remoto</li>
+            </ul>
+
+            <div class="about-links">
+              <a class="btn btn-primary btn-sm" href="https://github.com/Nicolas-crodrz" target="_blank"
+                rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
+              <a class="btn btn-outline btn-sm" href="#contact"><i class="fa-solid fa-paper-plane"></i> Contacto</a>
+            </div>
+          </div>
+
+          <div class="about-text" data-reveal>
+            <p>
+              Soy <strong>técnico en Sistemas Microinformáticos y Redes (SMR)</strong>,
+              <strong>Técnico Superior en Desarrollo de Aplicaciones Web (DAW)</strong> y estoy
+              <strong>especializado en Ciberseguridad</strong>. Actualmente curso
+              <strong>Ingeniería Informática</strong> en la UOC y desarrollo mi carrera entre el
+              Cabildo de Fuerteventura, la administración de sistemas y el desarrollo de software.
+            </p>
+            <p>
+              Me muevo con la misma soltura en el <em>front-end</em> (HTML, CSS, JavaScript, React) que
+              en el <em>back-end</em> (PHP, Laravel, Node.js, SQL, MongoDB) y en la parte de
+              <em>sistemas y redes</em>. Además, soy <strong>formador de formadores</strong> y
+              <strong>tutor de teleformación</strong>, así que disfruto tanto creando producto como
+              enseñando a otros a hacerlo.
+            </p>
+            <p>
+              Programar me entretiene: me gusta convertir ideas en experiencias, cuidar los detalles y
+              resolver problemas. Este portafolio es una muestra de ello — efectos, animaciones, una
+              escena 3D y mis proyectos abiertos en <strong>ventanas flotantes</strong>.
+            </p>
+
+            <div class="chips">
+              <span class="chip">Empatía</span>
+              <span class="chip">Creatividad</span>
+              <span class="chip">Resolución de problemas</span>
+              <span class="chip">Aprendizaje continuo</span>
+              <span class="chip">Atención al detalle</span>
+              <span class="chip">Iniciativa</span>
+              <span class="chip">Organización</span>
+              <span class="chip">Trabajo en equipo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESUME ============ -->
+    <section class="section" id="resume">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <span class="section-tag"><i class="fa-solid fa-route"></i> Trayectoria</span>
+          <h2 class="section-title">Experiencia y <span class="grad">formación</span></h2>
+        </header>
+
+        <div class="resume-grid">
+          <!-- Experience -->
+          <div class="resume-col" data-reveal>
+            <h3 class="resume-col-title"><i class="fa-solid fa-briefcase"></i> Experiencia laboral</h3>
+            <ol class="timeline">
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">2018 — 2024</span>
+                  <h4>Cabildo de Fuerteventura</h4>
+                  <p>Administrador de sistemas, programador, docente y tareas administrativas.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">Actualidad</span>
+                  <h4>Ayuntamiento de Puerto del Rosario</h4>
+                  <p>Administrador de sistemas y apoyo administrativo.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">—</span>
+                  <h4>Cámara de Comercio</h4>
+                  <p>Administrador de sistemas, gestión documental y financiera.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">—</span>
+                  <h4>Newport Media &amp; Films</h4>
+                  <p>Programador y soporte técnico.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">Colaboraciones</span>
+                  <h4>Proyectos varios</h4>
+                  <p>Gestión de datos, atención al público y apoyo administrativo.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Education -->
+          <div class="resume-col" data-reveal>
+            <h3 class="resume-col-title"><i class="fa-solid fa-graduation-cap"></i> Formación académica</h3>
+            <ol class="timeline">
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">2024 — Presente</span>
+                  <h4>Grado en Ingeniería Informática</h4>
+                  <p>UOC — Universitat Oberta de Catalunya.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">Especialización</span>
+                  <h4>ESP · Especialización en Ciberseguridad</h4>
+                  <p>Formación profesional de especialización.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">Grado Superior</span>
+                  <h4>GS · Desarrollo de Aplicaciones Web (DAW)</h4>
+                  <p>Técnico Superior en Desarrollo de Aplicaciones Web.</p>
+                </div>
+              </li>
+              <li class="tl-item">
+                <span class="tl-dot"></span>
+                <div class="tl-card glass">
+                  <span class="tl-date">Grado Medio</span>
+                  <h4>GM · Sistemas Microinformáticos y Redes (SMR)</h4>
+                  <p>Técnico en Sistemas Microinformáticos y Redes.</p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Featured IT qualifications -->
+        <h3 class="resume-subtitle" data-reveal><i class="fa-solid fa-certificate"></i> Titulaciones destacadas en
+          informática</h3>
+        <div class="featured-certs">
+          <article class="cert glass" data-reveal data-tilt>
+            <i class="fa-solid fa-building-columns cert-icon"></i>
+            <h4>Grado en Ingeniería Informática</h4>
+            <p>UOC — Universitat Oberta de Catalunya. Formación universitaria en curso orientada a
+              software, sistemas, redes e ingeniería del dato.</p>
+            <span class="cert-badge">Grado · UOC</span>
+          </article>
+          <article class="cert glass" data-reveal data-tilt>
+            <i class="fa-solid fa-shield-halved cert-icon"></i>
+            <h4>Especialización en Ciberseguridad</h4>
+            <p>Formación profesional de especialización: hacking ético, análisis de vulnerabilidades,
+              respuesta ante incidentes y seguridad de sistemas y redes.</p>
+            <span class="cert-badge">Especialización</span>
+          </article>
+          <article class="cert glass" data-reveal data-tilt>
+            <i class="fa-solid fa-code cert-icon"></i>
+            <h4>Técnico Superior en DAW</h4>
+            <p>Desarrollo de Aplicaciones Web: front-end, back-end, bases de datos, despliegue y
+              aplicaciones multiplataforma.</p>
+            <span class="cert-badge">Grado Superior</span>
+          </article>
+          <article class="cert glass" data-reveal data-tilt>
+            <i class="fa-solid fa-network-wired cert-icon"></i>
+            <h4>Técnico en SMR</h4>
+            <p>Sistemas Microinformáticos y Redes: montaje y mantenimiento de equipos, redes locales,
+              sistemas operativos y soporte técnico.</p>
+            <span class="cert-badge">Grado Medio</span>
+          </article>
+        </div>
+
+        <!-- Teaching qualifications -->
+        <h3 class="resume-subtitle" data-reveal><i class="fa-solid fa-chalkboard-user"></i> Formación en docencia</h3>
+        <div class="certs-grid">
+          <article class="cert-mini glass" data-reveal>
+            <h4><i class="fa-solid fa-chalkboard-user"></i> Formador de Formadores</h4>
+            <p>Certificación de docencia para la formación profesional para el empleo: programación,
+              impartición y evaluación de acciones formativas.</p>
+            <span class="cert-badge">Docencia</span>
+          </article>
+          <article class="cert-mini glass" data-reveal>
+            <h4><i class="fa-solid fa-laptop"></i> Teleformación</h4>
+            <p>Tutor-formador en teleformación: dinamización de aulas virtuales, tutorización en línea
+              y uso de plataformas de e-learning.</p>
+            <span class="cert-badge">E-learning</span>
+          </article>
+          <article class="cert-mini glass" data-reveal>
+            <h4><i class="fa-solid fa-people-group"></i> Educación y Dinamización</h4>
+            <p>Teleformación para docentes, dinamizador juvenil, ciberbullying y Fundación Sergio Alonso
+              (FP Plus Informática).</p>
+            <span class="cert-badge">Complementaria</span>
+          </article>
+        </div>
+
+        <!-- Complementary training -->
+        <h3 class="resume-subtitle" data-reveal><i class="fa-solid fa-book-open"></i> Formación complementaria</h3>
+        <div class="certs-grid">
+          <article class="cert-mini glass" data-reveal>
+            <h4><i class="fa-solid fa-code"></i> Programación y Desarrollo Web</h4>
+            <p>HTML5, CSS3, Flexbox, Grid, Responsive Design, transiciones CSS3, JavaScript (básico e
+              intermedio), C++, pseudocódigo, SQL y maquetación web.</p>
+          </article>
+          <article class="cert-mini glass" data-reveal>
+            <h4><i class="fa-solid fa-shield-halved"></i> Ciberseguridad y Redes</h4>
+            <p>Certificación Cisco (redes y switching), fundamentos de TCP/IP, Ethical Hacking,
+              Hacking Web, herramientas Blue Team / Red Team, hacking con buscadores y seguridad
+              tecnológica (COITT).</p>
+          </article>
+          <article class="cert-mini glass" data-reveal>
+            <h4><i class="fa-solid fa-file-excel"></i> Ofimática y Gestión Administrativa</h4>
+            <p>Certificación MOS (Microsoft Access), Excel (básico, avanzado y funciones), herramientas
+              digitales en el aula, gestión documental, archivo y atención al cliente.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKILLS ============ -->
+    <section class="section" id="skills">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <span class="section-tag"><i class="fa-solid fa-microchip"></i> Habilidades</span>
+          <h2 class="section-title">Lo que <span class="grad">manejo</span></h2>
+        </header>
+
+        <div class="skills-grid">
+          <div class="skills-col glass" data-reveal>
+            <h3><i class="fa-solid fa-palette"></i> Front-end &amp; Diseño</h3>
+            <div class="bar" data-level="95"><span class="bar-head"><b>HTML5 / CSS3</b><i>95%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="88"><span class="bar-head"><b>JavaScript</b><i>88%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="80"><span class="bar-head"><b>SASS / Bootstrap</b><i>80%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="70"><span class="bar-head"><b>React</b><i>70%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skills-col glass" data-reveal>
+            <h3><i class="fa-solid fa-server"></i> Back-end &amp; Datos</h3>
+            <div class="bar" data-level="82"><span class="bar-head"><b>PHP / Laravel</b><i>82%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="78"><span class="bar-head"><b>MySQL / SQL</b><i>78%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="72"><span class="bar-head"><b>Node.js / Socket.io</b><i>72%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="68"><span class="bar-head"><b>C# / C++ / MongoDB</b><i>68%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skills-col glass" data-reveal>
+            <h3><i class="fa-solid fa-shield-halved"></i> Sistemas &amp; Seguridad</h3>
+            <div class="bar" data-level="85"><span class="bar-head"><b>Administración de sistemas</b><i>85%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="78"><span class="bar-head"><b>Redes (Cisco)</b><i>78%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="76"><span class="bar-head"><b>Ciberseguridad</b><i>76%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="80"><span class="bar-head"><b>Ofimática / MOS</b><i>80%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skills-col glass" data-reveal>
+            <h3><i class="fa-solid fa-chalkboard-user"></i> Docencia &amp; Herramientas</h3>
+            <div class="bar" data-level="85"><span class="bar-head"><b>Formación / Teleformación</b><i>85%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="88"><span class="bar-head"><b>Git / GitHub</b><i>88%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="78"><span class="bar-head"><b>WordPress / Gestores</b><i>78%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+            <div class="bar" data-level="75"><span class="bar-head"><b>Metodologías ágiles</b><i>75%</i></span>
+              <div class="bar-track">
+                <div class="bar-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tech-strip" data-reveal>
+          <i class="fa-brands fa-html5" style="color:#e34f26" title="HTML5"></i>
+          <i class="fa-brands fa-css3-alt" style="color:#1572b6" title="CSS3"></i>
+          <i class="fa-brands fa-sass" style="color:#cc6699" title="Sass"></i>
+          <i class="fa-brands fa-js" style="color:#f7df1e" title="JavaScript"></i>
+          <i class="fa-brands fa-node-js" style="color:#68a063" title="Node.js"></i>
+          <i class="fa-brands fa-react" style="color:#61dafb" title="React"></i>
+          <i class="fa-brands fa-php" style="color:#787cb5" title="PHP"></i>
+          <i class="fa-brands fa-laravel" style="color:#ff2d20" title="Laravel"></i>
+          <i class="fa-brands fa-bootstrap" style="color:#7952b3" title="Bootstrap"></i>
+          <i class="fa-brands fa-wordpress" style="color:#21759b" title="WordPress"></i>
+          <i class="fa-brands fa-git-alt" style="color:#f05033" title="Git"></i>
+          <i class="fa-brands fa-github" style="color:#e8ecf5" title="GitHub"></i>
+          <i class="fa-solid fa-database" style="color:#00bcd4" title="SQL / MongoDB"></i>
+          <i class="fa-solid fa-shield-halved" style="color:#b6ff3c" title="Ciberseguridad"></i>
+          <i class="fa-solid fa-network-wired" style="color:#00f0ff" title="Redes"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section class="section" id="projects">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <span class="section-tag"><i class="fa-solid fa-folder-open"></i> Proyectos</span>
+          <h2 class="section-title">Mis <span class="grad">proyectos</span></h2>
+          <p class="section-sub">
+            Cada proyecto se abre en una <strong>ventana flotante</strong>: puedes arrastrarla,
+            minimizarla, maximizarla y cambiar su tamaño, con acceso directo a su
+            <strong>código en GitHub</strong>.
+          </p>
+        </header>
+
+        <div class="projects-toolbar" data-reveal>
+          <div class="filters" id="filters"></div>
+          <label class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" id="projectSearch" placeholder="Buscar proyecto o tecnología…"
+              aria-label="Buscar proyecto" />
+          </label>
+        </div>
+
+        <div class="projects-grid" id="projectsGrid"></div>
+        <p class="projects-empty" id="projectsEmpty" hidden>No se encontraron proyectos. Prueba otra búsqueda.</p>
+
+        <div class="projects-foot" data-reveal>
+          <a class="btn btn-outline" href="https://github.com/Nicolas-crodrz?tab=repositories" target="_blank"
+            rel="noopener">
+            <i class="fa-brands fa-github"></i> Ver todos los repositorios en GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="section" id="contact">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <span class="section-tag"><i class="fa-solid fa-paper-plane"></i> Contacto</span>
+          <h2 class="section-title">Hablemos de tu <span class="grad">proyecto</span></h2>
+        </header>
+
+        <div class="contact-grid">
+          <div class="contact-info" data-reveal>
+            <p class="contact-lead">
+              ¿Buscas un desarrollador web, alguien que administre tus sistemas o un formador para tus
+              cursos? Escríbeme y te respondo lo antes posible.
+            </p>
+            <ul class="contact-list">
+              <li>
+                <a href="mailto:cabrerarodriguezftv@gmail.com">
+                  <span class="ci-icon"><i class="fa-solid fa-envelope"></i></span>
+                  <span class="ci-text"><b>Email</b>cabrerarodriguezftv@gmail.com</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/Nicolas-crodrz" target="_blank" rel="noopener">
+                  <span class="ci-icon"><i class="fa-brands fa-github"></i></span>
+                  <span class="ci-text"><b>GitHub</b>@Nicolas-crodrz</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/Nicolas06729512" target="_blank" rel="noopener">
+                  <span class="ci-icon"><i class="fa-brands fa-x-twitter"></i></span>
+                  <span class="ci-text"><b>X / Twitter</b>@Nicolas06729512</span>
+                </a>
+              </li>
+              <li>
+                <span class="contact-static">
+                  <span class="ci-icon"><i class="fa-solid fa-laptop-code"></i></span>
+                  <span class="ci-text"><b>Modalidad</b>Presencial · Híbrido · Remoto</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          <form class="contact-form glass" id="contactForm" data-reveal novalidate>
+            <div class="field">
+              <label for="cf-name">Nombre</label>
+              <input id="cf-name" name="name" type="text" required placeholder="Tu nombre" />
+            </div>
+            <div class="field">
+              <label for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" required placeholder="tu@email.com" />
+            </div>
+            <div class="field">
+              <label for="cf-subject">Asunto</label>
+              <input id="cf-subject" name="subject" type="text" placeholder="¿En qué puedo ayudarte?" />
+            </div>
+            <div class="field">
+              <label for="cf-message">Mensaje</label>
+              <textarea id="cf-message" name="message" rows="5" required
+                placeholder="Cuéntame un poco más…"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">
+              <i class="fa-solid fa-paper-plane"></i> Enviar mensaje
+            </button>
+            <p class="form-note" id="formNote" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="#home" class="brand brand-footer">
+        <span class="brand-mark">NC</span>
+        <span class="brand-text">Nicolás<em>Cabrera</em></span>
+      </a>
+      <p class="footer-note">© <span id="year"></span> Nicolás Cabrera Rodríguez · Hecho con
+        <span class="heart">♥</span>, Three.js y mucha curiosidad.
+      </p>
+      <ul class="footer-socials">
+        <li><a href="https://github.com/Nicolas-crodrz" target="_blank" rel="noopener" aria-label="GitHub"><i
+              class="fa-brands fa-github"></i></a></li>
+        <li><a href="https://twitter.com/Nicolas06729512" target="_blank" rel="noopener" aria-label="X"><i
+              class="fa-brands fa-x-twitter"></i></a></li>
+        <li><a href="https://stackoverflow.com/users/19580095/nicolas" target="_blank" rel="noopener"
+            aria-label="Stack Overflow"><i class="fa-brands fa-stack-overflow"></i></a></li>
+        <li><a href="mailto:cabrerarodriguezftv@gmail.com" aria-label="Email"><i
+              class="fa-solid fa-envelope"></i></a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="to-top" id="toTop" aria-label="Volver arriba"><i class="fa-solid fa-chevron-up"></i></button>
+
+  <!-- Floating windows layer -->
+  <div class="wm" id="wm" aria-hidden="true">
+    <div class="wm-taskbar" id="wmTaskbar"></div>
+  </div>
+
+  <!-- Context menu -->
+  <div class="context-menu" id="contextMenu" role="menu">
+    <a role="menuitem" href="https://github.com/Nicolas-crodrz" target="_blank" rel="noopener"><i
+        class="fa-brands fa-github"></i> GitHub</a>
+    <button role="menuitem" id="ctxTheme"><i class="fa-solid fa-circle-half-stroke"></i> Cambiar tema</button>
+    <a role="menuitem" href="mailto:cabrerarodriguezftv@gmail.com"><i class="fa-solid fa-envelope"></i> Enviar
+      email</a>
+    <button role="menuitem" id="ctxTop"><i class="fa-solid fa-chevron-up"></i> Volver arriba</button>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/hero3d.js"></script>
+</body>
+
+</html>
